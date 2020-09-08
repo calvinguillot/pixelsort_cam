@@ -15,9 +15,9 @@ export default {
     PixelSort,
   },
   data: () => ({}),
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
+  // created() {
+  //   this.$vuetify.theme.dark = true;
+  // },
 };
 </script>
 

@@ -1,6 +1,32 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
     <div id="p5canvas" style="height:100vh"></div>
+    <v-row class="panelPOS">
+      <v-col cols="12">
+        <v-row justify="center" align="center">
+          <v-col cols="12">
+            <v-slider
+              v-model="gain"
+              color="white"
+              track-color="grey lighten-1"
+              min="0"
+              max="255"
+              vertical
+            ></v-slider>
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <v-btn small fab elevation="10" @click="switchCamera">
+              <v-icon>mdi-camera-switch</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <v-btn v-if="!saved" small fab elevation="10"  @click="saveImage">
+              <v-icon>mdi-download</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -10,28 +36,30 @@ import p5 from "p5";
 export default {
   data() {
     return {
-      sliderG: 75,
-      sliderR: 20,
+      gain: 75,
+      resolution: 8,
       ratio: 1.333,
+      cameraSel: 0,
+      cameraTypes: ["user", "environment"],
+      saved: false,
     };
   },
   methods: {
     psort() {
       const s = (p5) => {
-        var capture, step, pxsV, wW, wH, rW, transV;
+        var capture, step, pxsV, wW, wH, rW, transV, img;
         let unsorted = new Array();
         p5.setup = () => {
           p5.createCapture({
             audio: false,
             video: {
-              facingMode: "user",
-              // facingMode:  "environment"
+              facingMode: this.cameraTypes[this.cameraSel],
             },
           });
           wW = window.innerWidth;
           wH = window.innerHeight;
           rW = p5.floor(wH * this.ratio);
-          p5.createCanvas(wW, wH);
+          img = p5.createCanvas(wW, wH);
           capture = p5.createCapture(p5.VIDEO);
           capture.size(rW, wH);
           capture.hide();
@@ -44,8 +72,8 @@ export default {
           }
         };
         p5.draw = () => {
-          step = this.sliderR;
-          pxsV = this.sliderG;
+          step = this.resolution;
+          pxsV = this.gain;
           p5.translate(transV + rW, 0);
           p5.scale(-1, 1);
           p5.background(0);
@@ -71,13 +99,10 @@ export default {
             }
           }
 
-          // let sortedArr = new Array();
           for (let i = 0; i < unsorted.length; i++) {
-            // sortedArr.push(
             unsorted[i].sort(function (a, b) {
               if (a.l < pxsV) return b.l - a.l;
             });
-            // );
           }
 
           for (let i = 0; i < unsorted.length; i++) {
@@ -89,12 +114,30 @@ export default {
               p5.rect(px.x, px.y, px.step, px.step);
             });
           }
+          if (this.saved === true) {
+            this.saved = getImage();
+          }
         };
+        function getImage() {
+          p5.saveCanvas(img, "pixelsort_camera_cg", "png");
+          return false
+        }
       };
       new p5(s, "p5canvas");
     },
+    switchCamera() {
+      if (this.cameraSel === 0) {
+        this.cameraSel = 1;
+      } else {
+        this.cameraSel = 0;
+      }
+      console.log(this.cameraTypes[this.cameraSel]);
+    },
+    saveImage() {
+      this.saved = true;
+    },
     removeFeed() {
-      var list = document.getElementsByTagName("video"); 
+      var list = document.getElementsByTagName("video");
       if (list.length > 0) {
         list[0].parentNode.removeChild(list[0]);
       }
@@ -113,12 +156,11 @@ export default {
 </script>
 
 <style scoped>
-.sliderPos {
+.panelPOS {
   position: absolute;
-  transform: translate(-50%);
-  bottom: 65px;
-  left: 50%;
-  z-index: 3;
-  width: 200px;
+  top: 0;
+  left: 0px;
+  width: 100px;
+  z-index: 10;
 }
 </style>
