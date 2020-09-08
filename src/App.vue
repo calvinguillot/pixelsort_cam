@@ -1,28 +1,33 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app class="pa-0 ma-0">
+    <!-- <v-main> -->
+      <PixelSort />
+    <!-- </v-main> -->
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import PixelSort from "./components/PixelSort";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    PixelSort,
+  },
+  data: () => ({}),
+  created() {
+    this.$vuetify.theme.dark = true;
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style >
+body {
+  overflow: hidden;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
 </style>
