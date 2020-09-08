@@ -14,16 +14,16 @@
               vertical
             ></v-slider>
           </v-col>
-          <v-col cols="12" class="text-center">
+          <v-col v-if="isMobile" cols="12" class="text-center">
             <v-btn small fab elevation="10" @click="switchCamera">
               <v-icon>mdi-camera-switch</v-icon>
             </v-btn>
           </v-col>
-          <v-col cols="12" class="text-center">
+          <!-- <v-col cols="12" class="text-center">
             <v-btn small fab elevation="10" @click="saveImage">
               <v-icon>mdi-download</v-icon>
             </v-btn>
-          </v-col>
+          </v-col>-->
         </v-row>
       </v-col>
     </v-row>
@@ -39,15 +39,16 @@ export default {
       gain: 75,
       resolution: 8,
       ratio: 1.333,
-      cameraSel: 1,
+      cameraSel: 0,
+      isMobile: false,
       cameraTypes: ["user", { exact: "environment" }],
-      saved: false,
+      // saved: false,
     };
   },
   methods: {
     psort() {
       const s = (p5) => {
-        var capture, step, pxsV, wW, wH, rW, transV, img;
+        var capture, step, pxsV, wW, wH, rW, transV, translation, scaling;
         let unsorted = new Array();
         p5.setup = () => {
           let constraints = {
@@ -59,10 +60,10 @@ export default {
           wW = window.innerWidth;
           wH = window.innerHeight;
           rW = p5.floor(wH * this.ratio);
-          img = p5.createCanvas(wW, wH);
-          capture = p5.createCapture(constraints,p5.VIDEO);
+          p5.createCanvas(wW, wH);
+          capture = p5.createCapture(constraints, p5.VIDEO);
           capture.size(rW, wH);
-          // capture.hide();
+          capture.hide();
           p5.noStroke();
 
           if (wW > wH) {
@@ -70,12 +71,20 @@ export default {
           } else {
             transV = ((rW - wW) / 2) * -1;
           }
+
+          if (this.cameraSel === 0) {
+            scaling = -1;
+            translation = transV + rW;
+          } else {
+            scaling = 1;
+            translation = transV;
+          }
         };
         p5.draw = () => {
           step = this.resolution;
           pxsV = this.gain;
-          p5.translate(transV + rW, 0);
-          p5.scale(1, 1);
+          p5.translate(translation, 0);
+          p5.scale(scaling, 1);
           p5.background(0);
           capture.loadPixels();
 
@@ -114,34 +123,45 @@ export default {
               p5.rect(px.x, px.y, px.step, px.step);
             });
           }
-          if (this.saved === true) {
-            this.saved = getImage();
-          }
+          // if (this.saved === true) {
+          //   this.saved = getImage();
+          // }
         };
-        function getImage() {
-          p5.saveCanvas(img, "pixelsort_camera_cg", "png");
-          return false;
-        }
+        // function getImage() {
+        //   p5.saveCanvas(img, "pixelsort_camera_cg", "png");
+        //   return false;
+        // }
       };
       new p5(s, "p5canvas");
     },
+    removePrev() {
+      let divs = document.getElementsByTagName("canvas");
+      if (divs.length > 0) {
+        divs[0].parentNode.removeChild(divs[0]);
+      }
+    },
     switchCamera() {
-      // if (this.cameraSel === 0) {
-      //   this.cameraSel = 1;
-      // } else {
-      //   this.cameraSel = 0;
-      // }
-      // console.log(this.cameraSel)
+      if (this.cameraSel === 0) {
+        this.cameraSel = 1;
+        this.removePrev();
+        this.psort();
+      } else {
+        this.cameraSel = 0;
+        this.removePrev();
+        this.psort();
+      }
     },
-    saveImage() {
-      this.saved = true;
-    },
+    // saveImage() {
+    //   this.saved = true;
+    // },
   },
   mounted() {
     if (window.innerWidth < window.innerHeight) {
       this.ratio = 0.777;
+      this.isMobile = true;
     } else {
       this.ratio = 1.333;
+      this.isMobile = false;
     }
     this.psort();
   },

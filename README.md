@@ -1,4 +1,10 @@
-# pixelsortcam
+# PixelSorting Camera
+
+This is an interactive camera effect for web and mobile.
+
+You can use the slider to change the strength of the sorting effect and the switch button to change the camera (if you are in mobile).
+
+You can find a demo here [PixelSort Camera](https://pixelsortcam.web.app).
 
 ## Project setup
 ```
@@ -9,16 +15,3 @@ npm install
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
