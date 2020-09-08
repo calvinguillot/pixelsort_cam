@@ -20,7 +20,7 @@
             </v-btn>
           </v-col>
           <v-col cols="12" class="text-center">
-            <v-btn small fab elevation="10" :loading="saved" @click="saveImage">
+            <v-btn small fab elevation="10" @click="saveImage">
               <v-icon>mdi-download</v-icon>
             </v-btn>
           </v-col>
@@ -39,7 +39,7 @@ export default {
       gain: 75,
       resolution: 8,
       ratio: 1.333,
-      cameraSel: 0,
+      cameraSel: 1,
       cameraTypes: ["user", { exact: "environment" }],
       saved: false,
     };
@@ -50,19 +50,19 @@ export default {
         var capture, step, pxsV, wW, wH, rW, transV, img;
         let unsorted = new Array();
         p5.setup = () => {
-          p5.createCapture({
+          let constraints = {
             audio: false,
             video: {
               facingMode: this.cameraTypes[this.cameraSel],
             },
-          });
+          };
           wW = window.innerWidth;
           wH = window.innerHeight;
           rW = p5.floor(wH * this.ratio);
           img = p5.createCanvas(wW, wH);
-          capture = p5.createCapture(p5.VIDEO);
+          capture = p5.createCapture(constraints,p5.VIDEO);
           capture.size(rW, wH);
-          capture.hide();
+          // capture.hide();
           p5.noStroke();
 
           if (wW > wH) {
@@ -75,7 +75,7 @@ export default {
           step = this.resolution;
           pxsV = this.gain;
           p5.translate(transV + rW, 0);
-          p5.scale(-1, 1);
+          p5.scale(1, 1);
           p5.background(0);
           capture.loadPixels();
 
@@ -115,7 +115,7 @@ export default {
             });
           }
           if (this.saved === true) {
-            setTimeout((this.saved = getImage()), 1000);
+            this.saved = getImage();
           }
         };
         function getImage() {
@@ -126,20 +126,15 @@ export default {
       new p5(s, "p5canvas");
     },
     switchCamera() {
-      if (this.cameraSel === 0) {
-        this.cameraSel = 1;
-      } else {
-        this.cameraSel = 0;
-      }
+      // if (this.cameraSel === 0) {
+      //   this.cameraSel = 1;
+      // } else {
+      //   this.cameraSel = 0;
+      // }
+      // console.log(this.cameraSel)
     },
     saveImage() {
       this.saved = true;
-    },
-    removeFeed() {
-      var list = document.getElementsByTagName("video");
-      if (list.length > 0) {
-        list[0].parentNode.removeChild(list[0]);
-      }
     },
   },
   mounted() {
@@ -149,7 +144,6 @@ export default {
       this.ratio = 1.333;
     }
     this.psort();
-    setTimeout(this.removeFeed, 1000);
   },
 };
 </script>

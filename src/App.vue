@@ -16,11 +16,11 @@ export default {
 </script>
 
 <style >
-body {
+/* body {
   overflow: hidden;
 }
 
 ::-webkit-scrollbar {
   display: none;
-}
+} */
 </style>
