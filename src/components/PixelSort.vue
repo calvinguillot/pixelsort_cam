@@ -20,7 +20,7 @@
             </v-btn>
           </v-col>
           <v-col cols="12" class="text-center">
-            <v-btn v-if="!saved" small fab elevation="10"  @click="saveImage">
+            <v-btn small fab elevation="10" :loading="saved" @click="saveImage">
               <v-icon>mdi-download</v-icon>
             </v-btn>
           </v-col>
@@ -40,7 +40,7 @@ export default {
       resolution: 8,
       ratio: 1.333,
       cameraSel: 0,
-      cameraTypes: ["user", "environment"],
+      cameraTypes: ["user", { exact: "environment" }],
       saved: false,
     };
   },
@@ -115,12 +115,12 @@ export default {
             });
           }
           if (this.saved === true) {
-            this.saved = getImage();
+            setTimeout((this.saved = getImage()), 1000);
           }
         };
         function getImage() {
           p5.saveCanvas(img, "pixelsort_camera_cg", "png");
-          return false
+          return false;
         }
       };
       new p5(s, "p5canvas");
@@ -131,7 +131,6 @@ export default {
       } else {
         this.cameraSel = 0;
       }
-      console.log(this.cameraTypes[this.cameraSel]);
     },
     saveImage() {
       this.saved = true;

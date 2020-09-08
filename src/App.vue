@@ -1,8 +1,6 @@
 <template>
   <v-app class="pa-0 ma-0">
-    <!-- <v-main> -->
-      <PixelSort />
-    <!-- </v-main> -->
+    <PixelSort />
   </v-app>
 </template>
 
@@ -14,10 +12,6 @@ export default {
   components: {
     PixelSort,
   },
-  data: () => ({}),
-  // created() {
-  //   this.$vuetify.theme.dark = true;
-  // },
 };
 </script>
 
@@ -29,5 +23,4 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
-
 </style>
